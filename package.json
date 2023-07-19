@@ -1,0 +1,27 @@
+{
+  "name": "exam-browser",
+  "version": "1.0.0",
+  "description": "exam environment",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "author": "yash-wst",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^25.3.0",
+    "electron-builder": "22.10.5"
+  },
+  "build": {
+    "appId": "com.uniapps-oes.app",
+    "productName": "Exam Browser",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable"
+    }
+  }
+}
