@@ -2,7 +2,7 @@
   "name": "exam-browser",
   "version": "1.0.0",
   "description": "exam environment",
-  "main": "main.js",
+  "main": "./src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
@@ -18,9 +18,11 @@
     "appId": "com.uniapps-oes.app",
     "productName": "Exam Browser",
     "directories": {
-      "output": "dist"
+      "buildResources": "resources",
+      "output": "release"
     },
     "win": {
+      "icon": "resources/uniapps.png",
       "target": "portable"
     }
   }

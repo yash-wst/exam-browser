@@ -3,6 +3,9 @@ const {registerGlobalShortcuts, unregisterGlobalShortcuts} = require('./keys');
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
+    // This attribute would ensure that window is always
+    // opened in fullscreen. However, this doesn't have
+    // control over the state of the window after initialization.
     fullscreen: true,
     width: 800, // Adjust the width as needed
     height: 600, // Adjust the height as needed
@@ -10,13 +13,20 @@ function createWindow() {
     // Hide the window frame (title bar and menu bar)
     // frame: false,
     // Hide the menu bar
-    autoHideMenuBar: true
+    autoHideMenuBar: true,
+    // kiosk: true
   });
 
+
+  mainWindow.setAlwaysOnTop(true);
+  mainWindow.setFullScreen(true);
+  
   // Load your desired URL
-  mainWindow.loadURL('https://uniappsdemo.in', {
-    // userAgent: 'UniApps certified exam browser'
+  mainWindow.loadURL('https://10000.uniappsdemo.in', {
+    // userAgent: 'UniApps certified exam browser',
   });
+
+  // mainWindow.setAlwaysOnTop(true);
 
   mainWindow.webContents.on('did-finish-load', () => {
     // Retrieve the user agent
@@ -24,6 +34,25 @@ function createWindow() {
     console.log('User Agent:', mainWindow.webContents.getUserAgent());
     // Do whatever verification or processing you need with the user agent
   });
+
+  mainWindow.webContents.on('before-input-event', (event, input) =>{
+    // console.log(input);
+    if (input.alt || input.control || input.shift || input.meta){
+      console.log("Special keys used ",input.key);
+      event.preventDefault();
+    }
+  });
+
+  mainWindow.on('resize', () => {
+    console.log('Tried to minimize the window!');
+    if(!mainWindow.isFocused()){
+      console.log('Out of focus');
+      // mainWindow.minimize();
+      // mainWindow.setAlwaysOnTop(true);
+      // app.focus();
+    }
+    mainWindow.setFullScreen(true);
+  })
 
   // Open DevTools (optional)
   // mainWindow.webContents.openDevTools();
@@ -54,3 +83,5 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+
