@@ -1,22 +1,22 @@
 {
-  "name": "exam-browser",
+  "name": "exam-kiosk",
   "version": "1.0.0",
-  "description": "exam environment",
+  "description": "Safe exam environment",
   "main": "./src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "build": "electron-builder"
   },
-  "author": "yash-wst",
-  "license": "ISC",
+  "author": "WST",
+  "license": "WST",
   "devDependencies": {
     "electron": "^25.3.0",
     "electron-builder": "22.10.5"
   },
   "build": {
-    "appId": "com.uniapps-oes.app",
-    "productName": "Exam Browser",
+    "appId": "com.exam-kiosk.app",
+    "productName": "Exam Kiosk",
     "directories": {
       "buildResources": "resources",
       "output": "release"

@@ -19,6 +19,9 @@ function createWindow() {
     // frame: false,
     // Hide the menu bar
     autoHideMenuBar: true,
+    resizable: false,
+    movable: false,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -36,57 +39,45 @@ function createWindow() {
   mainWindow.setVisibleOnAllWorkspaces(true);
   mainWindow.show();
 
-
-
-  // mainWindow.loadURL('https://10000.uniappsdemo.in', {
-  //    userAgent: 'UniApps certified exam browser',
-  // });
-
-  // mainWindow.loadFile('src/index.html');
-
-  // mainWindow.setAlwaysOnTop(true);
-
-  mainWindow.webContents.on('did-finish-load', () => {
-    // Retrieve the user agent
-    // const userAgent = ;
-    // console.log('User Agent:', mainWindow.webContents.getUserAgent());
-    // Do whatever verification or processing you need with the user agent
-  });
-
   mainWindow.webContents.on('before-input-event', (event, input) =>{
     // console.log(input);
-    if (input.alt || input.meta){
+    if (input.alt || input.meta || input.control){
       console.log("Special keys used ",input.key);
       event.preventDefault();
     }
   });
 
   mainWindow.on('resize', () => {
+    mainWindow.moveTop();
     mainWindow.setFullScreen(true);
   });
 
+  mainWindow.on('minimize', () => {
+    mainWindow.restore();
+    mainWindow.moveTop();
+  });
+
+  mainWindow.on('show', () => {
+    mainWindow.focus();
+  })
   // Open DevTools (optional)
   // mainWindow.webContents.openDevTools();
 }
-
 // Create the Electron window when the app is ready
 app.whenReady().then(() => {
   
-  // app.requestSingleInstanceLock();
-  // console.log("IS RDS?: ", checkApplications("anydesk"));
   const checkInterval = setInterval(() => {
-    checkApplications("anydesk");
+    if(checkApplications()){
+      mainWindow.destroy();
+      app.quit();
+    }
     if(checkMultipleDisplays()){
-      disableSecondaryDisplays();
       mainWindow.moveTop();
     }
   }, 5000); // 5000 ms (5 seconds)
 
   // Check if multiple displays are attached
-  if (!checkMultipleDisplays()){
-  
-  // Disable any additional displays if attached
-  disableSecondaryDisplays();
+  if (!checkMultipleDisplays() && !checkApplications()){
   
   createWindow();
   registerGlobalShortcuts();
@@ -103,6 +94,7 @@ app.whenReady().then(() => {
 
   app.on('browser-window-blur', (event, window) => {
     event.preventDefault();
+    window.show();
     window.moveTop();
   });
   
@@ -112,11 +104,10 @@ app.whenReady().then(() => {
     if (process.platform !== 'darwin') {
         unregisterGlobalShortcuts();
         clipboard.clear();
-        // enableAllDisplays();
         clearInterval(checkInterval);
         createWindow();
-        // app.releaseSingleInstanceLock();
         // app.quit();
+
     }
   });
 
@@ -129,6 +120,7 @@ app.on('activate', () => {
 });
 } else{
   console.log("Multiple displays detected");
+  console.log("RDS: "+checkApplications());
   Notify("Critical Alert", "Cannot initiate with multiple displays attached!");
 }
 });

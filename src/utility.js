@@ -1,9 +1,8 @@
 const { Notification, screen } = require('electron');
 const { exec } = require('child_process');
-const { secureHeapUsed } = require('crypto');
+const { WINDOWS_APPS, LINUX_APPS } = require('./constants');
 
-
-let overlayWindow;
+let isRemoteDesktopRunning = false;
 
 function Notify(_Title, _Body){
 
@@ -44,7 +43,7 @@ function enableAllDisplays(){
   });
 }
 
-function checkApplications(a) {
+function checkApplications() {
 
     const isWindows = process.platform === 'win32';
     const isMacOS = process.platform === 'darwin';
@@ -53,33 +52,58 @@ function checkApplications(a) {
     let command;
 
     if (isWindows) {
-      command = 'tasklist /FI "IMAGENAME eq '+a+'"';
+      WINDOWS_APPS.find((app)=> {
+        command = 'tasklist /FI "IMAGENAME eq '+app+'*"';
+        exec(command, (error, stdout) => {
+          if (error) {
+            console.error(error.message);
+            return;
+          }
+          // If stdout contains any output, a remote desktop application is running
+          isRemoteDesktopRunning = stdout.trim().length > 62    
+          if (isRemoteDesktopRunning) {
+            Notify("REMOTE ACCESS ALERT", "Close all remote access apps!");
+            console.log(app+' is running.');
+            isRemoteDesktopRunning = true;
+            return isRemoteDesktopRunning;
+            // Perform actions if a remote desktop application is detected
+          } else {
+            console.log('No remote desktop application is running.');
+            isRemoteDesktopRunning = false;
+            // Perform actions if no remote desktop application is detected
+          }
+        });
+      });
     } else if (isMacOS) {
       command = 'pgrep '+a+"; echo $?";
     } else if (isLinux) {
-      command = 'pgrep '+a+"; echo $?";
+      LINUX_APPS.find((app) => {
+        command = 'pgrep '+app+"; echo $?";
+        exec(command, (error, stdout) => {
+          if (error) {
+            console.error(error.message);
+            return;
+          }
+    
+          let isRemoteDesktopRunning = false;
+          // If stdout contains any output, a remote desktop application is running
+          isRemoteDesktopRunning = stdout.trim().length > 1
+    
+          if (isRemoteDesktopRunning) {
+            Notify("REMOTE ACCESS ALERT", "Close all remote access apps!");
+            console.log('A remote desktop application is running on Linux.');
+            isRemoteDesktopRunning = true;
+            return isRemoteDesktopRunning;
+            // Perform actions if a remote desktop application is detected
+          } else {
+            console.log('No remote desktop application is running on Linux.');
+            isRemoteDesktopRunning = false;
+            // Perform actions if no remote desktop application is detected
+          }
+        });
+      });
     }
-
-    exec(command, (error, stdout) => {
-      if (error) {
-        console.error(error.message);
-        return;
-      }
-
-      // If stdout contains any output, a remote desktop application is running
-      const isRemoteDesktopRunning = stdout.trim().length > 1
-
-      if (isRemoteDesktopRunning) {
-        Notify("REMOTE ACCESS ALERT", "Close all remote access apps!");
-        console.log('A remote desktop application is running.');
-        // Perform actions if a remote desktop application is detected
-      } else {
-        console.log('No remote desktop application is running.');
-        // Perform actions if no remote desktop application is detected
-      }
-        return isRemoteDesktopRunning;
-    });
-
+    return isRemoteDesktopRunning;
 }
 
 

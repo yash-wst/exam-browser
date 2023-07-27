@@ -13,10 +13,10 @@ function registerGlobalShortcuts() {
         console.log("Taskmanager invoked")
       });
 
-    //   globalShortcut.register('CommandOrControl+T', () => {
-    //     // Handler for Ctrl+T
-    //     console.log("New Tab opened")
-    //   });
+      globalShortcut.register('CommandOrControl+Shift+I', () => {
+        // Handler for dev tools
+        console.log("Dev tools opened")
+      });
 
     //   globalShortcut.register('Super', () => {
     //     // Handler for super_key
@@ -26,11 +26,6 @@ function registerGlobalShortcuts() {
       globalShortcut.register('Alt+Tab', () => {
         // Handler for switch apps action
         console.log("Tried to switch apps")
-      });
-
-      globalShortcut.register('CommandOrControl+V', () => {
-        // Handler for switch apps action
-        console.log("Attempted paste")
       });
 
       globalShortcut.register('F11', async () => {
