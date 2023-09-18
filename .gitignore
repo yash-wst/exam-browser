@@ -132,3 +132,6 @@ dist
 
 # Package-lock file
 package-lock.json
+
+# Directories
+release/

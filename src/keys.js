@@ -1,4 +1,6 @@
-const { globalShortcut, Notification } = require('electron');
+const { globalShortcut } = require('electron');
+const { Notify } = require('./utility');
+
 
 function registerGlobalShortcuts() {
     // globalShortcut.register('CommandOrControl+C', () => {
@@ -11,10 +13,10 @@ function registerGlobalShortcuts() {
         console.log("Taskmanager invoked")
       });
 
-    //   globalShortcut.register('CommandOrControl+T', () => {
-    //     // Handler for Ctrl+T
-    //     console.log("New Tab opened")
-    //   });
+      globalShortcut.register('CommandOrControl+Shift+I', () => {
+        // Handler for dev tools
+        console.log("Dev tools opened")
+      });
 
     //   globalShortcut.register('Super', () => {
     //     // Handler for super_key
@@ -24,16 +26,14 @@ function registerGlobalShortcuts() {
       globalShortcut.register('Alt+Tab', () => {
         // Handler for switch apps action
         console.log("Tried to switch apps")
-        Notification({
-            title: 'Warning',
-            body: 'Don\'t attempt to switch apps!'
-          }).show();
       });
 
-      globalShortcut.register('CommandOrControl+V', () => {
+      globalShortcut.register('F11', async () => {
         // Handler for switch apps action
-        console.log("Attempted paste")
+        console.log("Minimize shortcut F11 used")
+        Notify('Warning', 'Don\'t attempt to switch apps!');
       });
+
 
 }
 
